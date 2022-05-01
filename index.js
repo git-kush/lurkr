@@ -40,6 +40,10 @@ lurkr.on(
       .addField("Channel", msg.channel.name + " (" + msg.channel.id + ")")
       .addField("Server", msg.guild.name + " (" + msg.guild.id + ")")
       .addField("Creation Time", msg.createdAt)
+      .addField(
+        "Attachments",
+        attachments.map((a) => `${a.name} - ${a.url}`).join("\n") || "None"
+      )
       .setTimestamp();
 
     whLog.send({
@@ -51,6 +55,58 @@ lurkr.on(
       avatarURL: avatar,
       files: attachments,
       content: msg.content,
+    });
+  }
+);
+
+lurkr.on(
+  "messageDeleteBulk",
+  /**
+   * @param {import("discord.js").Message[]} msgs
+   */
+  async (msgs) => {
+    const whLog = await lurkr.fetchWebhook(
+      config.loggingWebhook.id,
+      config.loggingWebhook.token
+    );
+    const whClone = await lurkr.fetchWebhook(
+      config.cloningWebhook.id,
+      config.cloningWebhook.token
+    );
+    msgs.forEach(async (msg) => {
+      if (msg.channel.type === "dm") return;
+      if (!config.susList.includes(msg.guild.id)) return;
+      const nick = msg.member.nickname || msg.author.username;
+      const avatar = msg.author.displayAvatarURL();
+      const attachments = msg.attachments.map((a) => {
+        return {
+          name: a.name,
+          attachment: a.url,
+        };
+      });
+      const data = new MessageEmbed()
+        .setColor("#1d242e")
+        .setAuthor(`${msg.author.tag}`, avatar)
+        .addField("Message", msg.content)
+        .addField("Edits Cache", msg.edits.map((e) => e.content).join("\n"))
+        .addField("Channel", msg.channel.name + " (" + msg.channel.id + ")")
+        .addField("Server", msg.guild.name + " (" + msg.guild.id + ")")
+        .addField("Creation Time", msg.createdAt)
+        .addField(
+          "Attachments",
+          attachments.map((a) => `${a.name} - ${a.url}`).join("\n") || "None"
+        )
+        .setTimestamp();
+      whLog.send({
+        username: "DELETED",
+        embeds: [data],
+      });
+      whClone.send({
+        username: nick,
+        avatarURL: avatar,
+        files: attachments,
+        content: msg.content,
+      });
     });
   }
 );
