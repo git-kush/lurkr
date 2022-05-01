@@ -42,7 +42,7 @@ lurkr.on(
       .addField("Creation Time", msg.createdAt)
       .addField(
         "Attachments",
-        attachments.map((a) => `${a.name} - ${a.url}`).join("\n") || "None"
+        msg.attachments.map((a) => `${a.name} - ${a.url}`).join("\n") || "None"
       )
       .setTimestamp();
 
@@ -94,7 +94,8 @@ lurkr.on(
         .addField("Creation Time", msg.createdAt)
         .addField(
           "Attachments",
-          attachments.map((a) => `${a.name} - ${a.url}`).join("\n") || "None"
+          msg.attachments.map((a) => `${a.name} - ${a.url}`).join("\n") ||
+            "None"
         )
         .setTimestamp();
       whLog.send({
