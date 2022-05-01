@@ -73,7 +73,7 @@ lurkr.on(
       config.cloningWebhook.id,
       config.cloningWebhook.token
     );
-    msgs.forEach(async (msg) => {
+    msgs.forEach((msg) => {
       if (msg.channel.type === "dm") return;
       if (!config.susList.includes(msg.guild.id)) return;
       const nick = msg.member.nickname || msg.author.username;
@@ -119,13 +119,14 @@ lurkr.on(
    * @param {import("discord.js").Message} newMsg
    */
   async (oldMsg, newMsg) => {
+    if (oldMsg.author.bot) return;
+    if (oldMsg.channel.type === "dm") return;
+    if (!config.susList.includes(oldMsg.guild.id)) return;
+    if (oldMsg.content === newMsg.content) return;
     const whEdits = await lurkr.fetchWebhook(
       config.editsWebhook.id,
       config.editsWebhook.token
     );
-    if (oldMsg.author.bot) return;
-    if (oldMsg.channel.type === "dm") return;
-    if (!config.susList.includes(oldMsg.guild.id)) return;
     const nick = oldMsg.member.nickname || oldMsg.author.username;
     const avatar = oldMsg.author.displayAvatarURL();
     const data = new MessageEmbed()
