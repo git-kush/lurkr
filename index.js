@@ -26,12 +26,6 @@ lurkr.on(
     );
     const nick = msg.member.nickname || msg.author.username;
     const avatar = msg.author.displayAvatarURL();
-    const attachments = msg.attachments.map((a) => {
-      return {
-        name: a.name,
-        attachment: a.url,
-      };
-    });
     const data = new MessageEmbed()
       .setColor("#1d242e")
       .setAuthor(`${msg.author.tag}`, avatar)
@@ -53,7 +47,7 @@ lurkr.on(
     whClone.send({
       username: nick,
       avatarURL: avatar,
-      files: attachments,
+      files: msg.attachments.map((a) => a.url),
       content: msg.content,
     });
   }
@@ -78,12 +72,6 @@ lurkr.on(
       if (!config.susList.includes(msg.guild.id)) return;
       const nick = msg.member.nickname || msg.author.username;
       const avatar = msg.author.displayAvatarURL();
-      const attachments = msg.attachments.map((a) => {
-        return {
-          name: a.name,
-          attachment: a.url,
-        };
-      });
       const data = new MessageEmbed()
         .setColor("#1d242e")
         .setAuthor(`${msg.author.tag}`, avatar)
@@ -105,7 +93,7 @@ lurkr.on(
       whClone.send({
         username: nick,
         avatarURL: avatar,
-        files: attachments,
+        files: msg.attachments.map((a) => a.url),
         content: msg.content,
       });
     });
