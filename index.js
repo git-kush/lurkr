@@ -67,7 +67,7 @@ lurkr.on(
       config.cloningWebhook.id,
       config.cloningWebhook.token
     );
-    msgs.forEach((msg) => {
+    msgs.reverse().forEach((msg) => {
       if (msg.channel.type === "dm") return;
       if (!config.susList.includes(msg.guild.id)) return;
       const nick = msg.member.nickname || msg.author.username;
