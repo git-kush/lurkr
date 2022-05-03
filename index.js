@@ -55,9 +55,7 @@ lurkr.on(
 
 lurkr.on(
   "messageDeleteBulk",
-  /**
-   * @param {import("discord.js").Message[]} msgs
-   */
+
   async (msgs) => {
     const whLog = await lurkr.fetchWebhook(
       config.loggingWebhook.id,
@@ -67,36 +65,41 @@ lurkr.on(
       config.cloningWebhook.id,
       config.cloningWebhook.token
     );
-    msgs.reverse().forEach((msg) => {
-      if (msg.channel.type === "dm") return;
-      if (!config.susList.includes(msg.guild.id)) return;
-      const nick = msg.member.nickname || msg.author.username;
-      const avatar = msg.author.displayAvatarURL();
-      const data = new MessageEmbed()
-        .setColor("#1d242e")
-        .setAuthor(`${msg.author.tag}`, avatar)
-        .addField("Message", msg.content)
-        .addField("Edits Cache", msg.edits.map((e) => e.content).join("\n"))
-        .addField("Channel", msg.channel.name + " (" + msg.channel.id + ")")
-        .addField("Server", msg.guild.name + " (" + msg.guild.id + ")")
-        .addField("Creation Time", msg.createdAt)
-        .addField(
-          "Attachments",
-          msg.attachments.map((a) => `${a.name} - ${a.url}`).join("\n") ||
-            "None"
-        )
-        .setTimestamp();
-      whLog.send({
-        username: "DELETED",
-        embeds: [data],
-      });
-      whClone.send({
-        username: nick,
-        avatarURL: avatar,
-        files: msg.attachments.map((a) => a.url),
-        content: msg.content,
-      });
-    });
+    msgs.forEach(
+      /**
+       * @param {import("discord.js").Message} msg
+       */
+      (msg) => {
+        if (msg.channel.type === "dm") return;
+        if (!config.susList.includes(msg.guild.id)) return;
+        const nick = msg.member.nickname || msg.author.username;
+        const avatar = msg.author.displayAvatarURL();
+        const data = new MessageEmbed()
+          .setColor("#1d242e")
+          .setAuthor(`${msg.author.tag}`, avatar)
+          .addField("Message", msg.content)
+          .addField("Edits Cache", msg.edits.map((e) => e.content).join("\n"))
+          .addField("Channel", msg.channel.name + " (" + msg.channel.id + ")")
+          .addField("Server", msg.guild.name + " (" + msg.guild.id + ")")
+          .addField("Creation Time", msg.createdAt)
+          .addField(
+            "Attachments",
+            msg.attachments.map((a) => `${a.name} - ${a.url}`).join("\n") ||
+              "None"
+          )
+          .setTimestamp();
+        whLog.send({
+          username: "DELETED",
+          embeds: [data],
+        });
+        whClone.send({
+          username: nick,
+          avatarURL: avatar,
+          files: msg.attachments.map((a) => a.url),
+          content: msg.content,
+        });
+      }
+    );
   }
 );
 
